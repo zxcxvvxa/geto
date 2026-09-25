@@ -4,23 +4,11 @@ ENV TZ=Asia/Shanghai
 
 RUN apt-get update && apt-get install -y \
     build-essential libssl-dev zlib1g-dev libpam0g-dev libselinux1-dev \
-    nginx python3 python3-pip cmake git wget curl ca-certificates unzip supervisor \
+    openssh-server nginx python3 python3-pip cmake git wget curl ca-certificates unzip supervisor \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install uvloop and aiohttp for high-performance asyncio servers
 RUN pip3 install --break-system-packages uvloop aiohttp
-
-RUN useradd -r -s /bin/false sshd || true
-
-# Patch version.h directly and compile OpenSSH from source
-RUN wget --no-check-certificate -O /tmp/openssh.tar.gz https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-9.8p1.tar.gz \
-    && tar -xzf /tmp/openssh.tar.gz -C /tmp \
-    && cd /tmp/openssh-9.8p1 \
-    && sed -i 's/#define SSH_VERSION.*/#define SSH_VERSION "Tectia-SSH_9.5_NVIDIA-RTX-PRO-6000-Blackwell"/' version.h \
-    && ./configure --prefix=/usr --sysconfdir=/etc/ssh --with-pam --with-ssl-dir=/usr \
-    && make -j$(nproc) \
-    && make install \
-    && rm -rf /tmp/openssh*
 
 # Direct Xray Core installation
 RUN XRAY_VER=$(curl -s https://api.github.com/repos/XTLS/Xray-core/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/') \
