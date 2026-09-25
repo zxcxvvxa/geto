@@ -1,0 +1,34 @@
+# Security & Credentials (protect keys and secret config overrides)
+*.pem
+*.key
+*.crt
+*.pub
+ssh_host_*
+.env
+.env.local
+
+# Python runtime artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+
+# Service logs & runtime PID files
+*.log
+/logs/
+/var/log/
+*.pid
+
+# System & OS metadata
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*~
+
+# Zip files / Temporary binaries (e.g. downloaded xray archives)
+*.zip
+*.tar.gz
