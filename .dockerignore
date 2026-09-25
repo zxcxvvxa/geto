@@ -1,0 +1,29 @@
+# Git repository metadata
+.git
+.gitignore
+README.md
+
+# Local Python runtime artifacts & environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+ENV/
+env/
+
+# Docker & CI build configuration files
+Dockerfile
+.dockerignore
+docker-compose*.yml
+.env*
+
+# Local OpenResty & Supervisor logs/PID files
+*.log
+logs/
+*.pid
+
+# Temporary & system metadata files
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
