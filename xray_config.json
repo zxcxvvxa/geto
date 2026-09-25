@@ -1,0 +1,175 @@
+{
+  "log": {
+    "loglevel": "none"
+  },
+  "dns": {
+    "servers": [
+      "223.5.5.5",
+      "223.6.6.6"
+    ],
+    "strategy": "UseIPv4",
+    "disableCache": false,
+    "disableFallback": false
+  },
+  "inbounds": [
+    {
+      "port": 10085,
+      "listen": "127.0.0.1",
+      "protocol": "vless",
+      "tag": "vless-ws",
+      "settings": {
+        "clients": [
+          {
+            "id": "7c9b83e1-4f12-4c6e-82df-13928e4692ba",
+            "level": 0
+          }
+        ],
+        "decryption": "none"
+      },
+      "streamSettings": {
+        "network": "ws",
+        "wsSettings": {
+          "path": "/vlws"
+        },
+        "sockopt": {
+          "tcpFastOpen": true,
+          "tcpNoDelay": true,
+          "tcpKeepAliveInterval": 15
+        }
+      }
+    },
+    {
+      "port": 10086,
+      "listen": "127.0.0.1",
+      "protocol": "trojan",
+      "tag": "trojan-ws",
+      "settings": {
+        "clients": [
+          {
+            "password": "Geto-Suguru",
+            "level": 0
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "wsSettings": {
+          "path": "/trws"
+        },
+        "sockopt": {
+          "tcpFastOpen": true,
+          "tcpNoDelay": true,
+          "tcpKeepAliveInterval": 15
+        }
+      }
+    },
+    {
+      "port": 10087,
+      "listen": "127.0.0.1",
+      "protocol": "trojan",
+      "tag": "trojan-xh",
+      "settings": {
+        "clients": [
+          {
+            "password": "Geto-Suguru",
+            "level": 0
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "xhttp",
+        "xhttpSettings": {
+          "path": "/trxh",
+          "mode": "auto"
+        },
+        "sockopt": {
+          "tcpFastOpen": true,
+          "tcpNoDelay": true,
+          "tcpKeepAliveInterval": 15,
+          "tcpKeepAliveIdle": 30,
+          "tcpKeepAliveCount": 3,
+          "tcpQuickAck": true,
+          "tcpcongestion": "bbr"
+        }
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls"
+        ]
+      }
+    },
+    {
+      "port": 10088,
+      "listen": "127.0.0.1",
+      "protocol": "vless",
+      "tag": "vless-xh",
+      "settings": {
+        "clients": [
+          {
+            "id": "7c9b83e1-4f12-4c6e-82df-13928e4692ba",
+            "level": 0
+          }
+        ],
+        "decryption": "none"
+      },
+      "streamSettings": {
+        "network": "xhttp",
+        "xhttpSettings": {
+          "path": "/vlxh",
+          "mode": "auto"
+        },
+        "sockopt": {
+          "tcpFastOpen": true,
+          "tcpNoDelay": true,
+          "tcpKeepAliveInterval": 15,
+          "tcpKeepAliveIdle": 30,
+          "tcpKeepAliveCount": 3,
+          "tcpQuickAck": true,
+          "tcpcongestion": "bbr"
+        }
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls"
+        ]
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "tag": "direct",
+      "settings": {
+        "domainStrategy": "UseIPv4"
+      }
+    },
+    {
+      "protocol": "blackhole",
+      "tag": "block",
+      "settings": {
+        "response": {
+          "type": "none"
+        }
+      }
+    }
+  ],
+  "routing": {
+    "domainStrategy": "AsIs",
+    "rules": [
+      {
+        "type": "field",
+        "inboundTag": [
+          "vless-ws",
+          "trojan-ws",
+          "trojan-xh",
+          "vless-xh"
+        ],
+        "outboundTag": "direct"
+      }
+    ]
+  }
+}
