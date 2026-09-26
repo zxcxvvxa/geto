@@ -7,12 +7,9 @@ RUN apt-get update && apt-get install -y \
     openssh-server nginx python3 python3-pip cmake git wget curl ca-certificates unzip supervisor \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install uvloop and aiohttp for high-performance asyncio servers
-RUN pip3 install --break-system-packages uvloop aiohttp
-
-# Direct Xray Core installation
-RUN XRAY_VER=$(curl -s https://api.github.com/repos/XTLS/Xray-core/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/') \
-    && wget -O /tmp/xray.zip "https://github.com/XTLS/Xray-core/releases/download/${XRAY_VER}/Xray-linux-64.zip" \
+# Direct Xray Core installation (Direct download with fallback)
+RUN (wget -O /tmp/xray.zip "https://github.com/XTLS/Xray-core/releases/latest/download/Xray-linux-64.zip" || \
+     wget -O /tmp/xray.zip "https://ghproxy.com/https://github.com/XTLS/Xray-core/releases/latest/download/Xray-linux-64.zip") \
     && unzip /tmp/xray.zip -d /usr/local/bin/ \
     && chmod +x /usr/local/bin/xray \
     && mkdir -p /usr/local/etc/xray \
