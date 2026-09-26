@@ -21,7 +21,7 @@ RUN git clone https://github.com/ambrop72/badvpn.git /tmp/badvpn \
     && cmake .. -DBUILD_NOTHING_BY_DEFAULT=1 -DBUILD_UDPGW=1 \
     && make install && rm -rf /tmp/badvpn
 
-RUN mkdir -p /var/run/sshd /run/sshd
+RUN mkdir -p /var/run/sshd /run/sshd /app
 RUN useradd -m -s /bin/bash geto && echo 'geto:suguru' | chpasswd
 
 # Configure OpenSSH settings for maximum speed & low latency
@@ -52,7 +52,7 @@ COPY supervisord.conf /etc/supervisor/supervisord.conf
 COPY wsproxy.py /app/wsproxy.py
 COPY sub_server.py /usr/local/bin/sub_server.py
 COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh /usr/local/bin/anti_ddos.py /usr/local/bin/sub_server.py
+RUN chmod +x /entrypoint.sh /app/wsproxy.py /usr/local/bin/sub_server.py
 
 EXPOSE 8080
 ENTRYPOINT ["/entrypoint.sh"]
