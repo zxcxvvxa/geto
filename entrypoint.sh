@@ -1,15 +1,22 @@
 #!/bin/bash
 set -e
 
-echo "[+] Starting container initialization..."
+echo "[+] Starting ultra low-latency container environment..."
 
-# Set File Descriptor Limits
+# 1. Maximize File Descriptor Limits
 ulimit -n 1048576 2>/dev/null || ulimit -n 65535 2>/dev/null || true
 
-# Prepare SSH Host Keys & Runtime Dirs
-echo "[+] Initializing SSH environment..."
-ssh-keygen -A 2>/dev/null || true
-mkdir -p /run/sshd /var/run/sshd
+# 2. Prepare Runtime Directories
+mkdir -p /run/sshd /var/run/sshd /app
 
-echo "[+] Handing over process management to Supervisor..."
-exec /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
+# 3. Generate SSH Host Keys explicitly if missing
+if [ ! -f /etc/ssh/ssh_host_rsa_key ]; then
+    echo "[+] Generating missing OpenSSH host keys..."
+    ssh-keygen -A
+fi
+
+# 4. Clean up stale supervisor PID files from previous crashes
+rm -f /var/run/supervisord.pid /tmp/supervisord.sock
+
+echo "[+] Launching Supervisor..."
+exec /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf
