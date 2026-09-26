@@ -24,17 +24,23 @@ RUN git clone https://github.com/ambrop72/badvpn.git /tmp/badvpn \
 RUN mkdir -p /var/run/sshd /run/sshd
 RUN useradd -m -s /bin/bash geto && echo 'geto:suguru' | chpasswd
 
-# Configure OpenSSH settings
+# Configure OpenSSH settings for maximum speed & low latency
 RUN echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
 RUN echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config
 RUN { \
     echo "UseDNS no"; \
+    echo "GSSAPIAuthentication no"; \
+    echo "GSSAPIKeyExchange no"; \
     echo "TCPKeepAlive yes"; \
-    echo "ClientAliveInterval 15"; \
-    echo "ClientAliveCountMax 3"; \
-    echo "MaxSessions 50"; \
-    echo "MaxStartups 50:30:100"; \
+    echo "ClientAliveInterval 10"; \
+    echo "ClientAliveCountMax 2"; \
+    echo "MaxSessions 500"; \
+    echo "MaxStartups 1000:30:2000"; \
+    echo "MaxAuthTries 10"; \
     echo "Compression no"; \
+    echo "Ciphers aes128-gcm@openssh.com,chacha20-poly1305@openssh.com,aes128-ctr"; \
+    echo "MACs hmac-sha2-256-etm@openssh.com,umac-64-etm@openssh.com"; \
+    echo "KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org"; \
     } >> /etc/ssh/sshd_config
 
 COPY banner.txt /etc/ssh/banner.txt
