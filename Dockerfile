@@ -49,7 +49,6 @@ RUN echo "Banner /etc/ssh/banner.txt" >> /etc/ssh/sshd_config
 COPY xray_config.json /usr/local/etc/xray/config.json
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY supervisord.conf /etc/supervisor/supervisord.conf
-COPY anti_ddos.py /usr/local/bin/anti_ddos.py
 COPY sub_server.py /usr/local/bin/sub_server.py
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh /usr/local/bin/anti_ddos.py /usr/local/bin/sub_server.py
