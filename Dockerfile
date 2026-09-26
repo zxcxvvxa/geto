@@ -1,3 +1,10 @@
+# Stage 1: Build static Go binary
+FROM golang:1.22-bookworm AS go-builder
+WORKDIR /src
+COPY wsproxy.go .
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /app/wsproxy wsproxy.go
+
+# Stage 2: Final Runtime Container
 FROM debian:bookworm-slim
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Asia/Shanghai
@@ -49,10 +56,10 @@ RUN echo "Banner /etc/ssh/banner.txt" >> /etc/ssh/sshd_config
 COPY xray_config.json /usr/local/etc/xray/config.json
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY supervisord.conf /etc/supervisor/supervisord.conf
-COPY wsproxy.py /app/wsproxy.py
+COPY --from=go-builder /app/wsproxy /app/wsproxy
 COPY sub_server.py /usr/local/bin/sub_server.py
 COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh /app/wsproxy.py /usr/local/bin/sub_server.py
+RUN chmod +x /entrypoint.sh /app/wsproxy /usr/local/bin/sub_server.py
 
 EXPOSE 8080
 ENTRYPOINT ["/entrypoint.sh"]
